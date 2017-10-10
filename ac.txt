@@ -1,0 +1,3 @@
+npm install express-generator -g
+
+express -c sass -v pug api_client
