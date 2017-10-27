@@ -36,9 +36,16 @@ var models = (function() {
 })();
 
 var _req = request('http://datalab.naver.com/', function (e, r, b) {
+
+    if(e) {
+        show_error();
+        return;
+    }
     var $ = cheerio.load(b);
 
-    var kwargs = $('div.keyword_rank.select_date li.list > a.list_area').map(function(i, _elem) {
+    var root_div = $('div.keyword_rank.select_date li.list > a.list_area');
+
+    var kwargs = root_div.map(function(i, _elem) {
         var elem = $(this);
         var name = elem.find('span.title').text();
         var rank = elem.find('em.num').text();
@@ -63,3 +70,12 @@ var _req = request('http://datalab.naver.com/', function (e, r, b) {
     });
     
 });
+
+function show_error() {
+    var telegram = require('.telegram');
+}
+
+var telegram = require('./telegram');
+var bot = telegram.bot;
+
+bot.sendMessage(202282841, 'keyword collect error!');
