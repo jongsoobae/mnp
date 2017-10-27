@@ -38,12 +38,17 @@ var models = (function() {
 var _req = request('http://datalab.naver.com/', function (e, r, b) {
 
     if(e) {
-        show_error();
+        show_error('http://datalab.naver.com/ server down??');
         return;
     }
     var $ = cheerio.load(b);
 
     var root_div = $('div.keyword_rank.select_date li.list > a.list_area');
+
+    if(!root_div || root_div.length < 20) {
+        show_error(`dom keyword length < 20 ( ${root_div.length} )`);
+        return;
+    }
 
     var kwargs = root_div.map(function(i, _elem) {
         var elem = $(this);
@@ -71,11 +76,8 @@ var _req = request('http://datalab.naver.com/', function (e, r, b) {
     
 });
 
-function show_error() {
-    var telegram = require('.telegram');
+function show_error(msg) {
+    var telegram = require('./telegram');
+    var bot = telegram.bot;
+    bot.sendMessage(202282841, `keyword collect error! error => ${msg}`);
 }
-
-var telegram = require('./telegram');
-var bot = telegram.bot;
-
-bot.sendMessage(202282841, 'keyword collect error!');
